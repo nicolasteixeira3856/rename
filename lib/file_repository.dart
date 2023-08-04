@@ -161,8 +161,11 @@ class FileRepository {
     }
     for (var i = 0; i < contentLineByLine!.length; i++) {
       if (contentLineByLine[i].contains('applicationId')) {
-        contentLineByLine[i] = '        applicationId \"$bundleId\"';
-        break;
+        if (contentLineByLine[i].contains('=')) {
+          contentLineByLine[i] = contentLineByLine[i].replaceAllMapped( RegExp(r'(\s*applicationId\s*=\s*)([^\s]+)'), (match) => '${match.group(1)}"$bundleId"');
+        } else {
+          contentLineByLine[i] = contentLineByLine[i].replaceAllMapped( RegExp(r'(\s*applicationId\s*)([^\s]+)'), (match) => '${match.group(1)}"$bundleId"');
+        }
       }
     }
     var writtenFile = await writeFile(
